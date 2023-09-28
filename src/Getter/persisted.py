@@ -1,6 +1,6 @@
 from keys import API_URL_PERSISTED, KEY
 import requests 
-import json 
+
 
 def leagues():
     leagues = requests.get(
@@ -19,3 +19,17 @@ def tournaments(tournament_id):
     
     return tournaments
     
+    
+def completedEvents(tournament_id):
+    tournament_data = requests.get(
+    f"{API_URL_PERSISTED}/getCompletedEvents",
+    params = {'hl':'pt-BR', 'tournamentId':[tournament_id]},
+    headers = {'x-api-key': KEY}
+)
+    
+    return tournament_data
+
+
+
+
+
