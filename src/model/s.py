@@ -1,62 +1,73 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Float, Date, Enum, JSON, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Enum, Date, Float, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+
+db_url = 'sqlite:///shiba.sqlite'
+engine = create_engine(db_url, echo=True)
 
 Base = declarative_base()
 
 class League(Base):
     __tablename__ = 'leagues'
 
-    id = Column(Integer, primary_key=True)
-    slug = Column(String(40))
-    name = Column(String(40))
-    region = Column(String(40))
+    league_id = Column(Integer, primary_key=True, autoincrement=False)
+    slug = Column(String(100))
+    name = Column(String(100))
+    region = Column(String(100))
 
     tournaments = relationship('Tournament', back_populates='league')
     
 class Tournament(Base):
     __tablename__ = 'tournaments'
     
-    id = Column(Integer, primary_key=True)
+    tournament_id = Column(Integer, primary_key=True, autoincrement=False)
     slug = Column(String(100))
     start_date = Column(Date)
-    league_id = Column(Integer, ForeignKey('leagues.id'))  
+    league_id = Column(Integer, ForeignKey('leagues.league_id'))  
     
     league = relationship('League', back_populates='tournaments')
 
 class Strategy(Enum):
-    BestOf1 = 'best_of_one'
-    BestOf1 = 'best_of_three'
-    BestOf5 = 'best_of_five'
-
-
-class Teams(Base):
-    __tablename__ = 'tournaments'
-    
-    id = Column(Integer, primary_key=True)
-    slug = Column(String(100))
-    start_date = Column(Date)
-    league_id = Column(Integer, ForeignKey('leagues.id'))  
-    
-    league = relationship('League', back_populates='tournaments')
+    BestOf1 = 'bestOf1'
+    BestOf3 = 'bestOf3'
+    BestOf5 = 'bestOf5'
     
 class Match(Base):
     __tablename__ = 'matches'
     
-    id = Column(Integer, primary_key=True)
+    match_id = Column(Integer, primary_key=True, autoincrement=False)
+    tournament_id = Column(Integer, ForeignKey('tournaments.tournament_id'))  # Corrected this line
     strategy = Column(Strategy)    
-    match_id = Column(Integer)
-    frames = relationship("Frames", back_populates="match")
+    name_team0 = Column(String)
+    name_team1 = Column(String)
+    result_team0 = Column(Integer)
+    result_team1 = Column(Integer)
+    
+    # One-to-many relationship: Match can have multiple Games
+    games = relationship("Game", back_populates="match")
 
-class Frames(Base):
+class Game(Base): 
+    __tablename__ = 'games'
+
+    game_id = Column(Integer, primary_key=True, autoincrement=False)
+    
+    match_id = Column(Integer, ForeignKey('matches.match_id'))
+    frames = relationship("Frame", back_populates="game")
+    match = relationship("Match", back_populates="games")
+
+class Frame(Base):
     __tablename__ = 'frames'
     
     id = Column(Integer, primary_key=True)
     game_time = Column(Date)
-    match_id = Column(Integer)
-    match = relationship("Match", back_populates="frames")
-    game_id = Column(Integer)
-        # Define columns for each participant
+    
+    # Many-to-one relationship: Frame belongs to one Game
+    game_id = Column(Integer, ForeignKey('games.game_id'))
+    
+    # Define a back reference to access the parent Game from Frame
+    game = relationship("Game", back_populates="frames")
+    
+    # Define columns for each participant
     participant1_level = Column(Integer)
     participant1_kills = Column(Integer)
     participant1_deaths = Column(Integer)
@@ -266,3 +277,9 @@ class Frames(Base):
     participant10_tenacity = Column(Float)
     participant10_items = Column(JSON)
     participant10_perkMetadata = Column(JSON)
+    
+    
+Base.metadata.create_all(engine)
+
+
+Session = sessionmaker(bind=engine)

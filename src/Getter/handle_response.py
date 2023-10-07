@@ -6,4 +6,5 @@ def handle_response(response):
             "status_code": response.status_code,
             "content": response.content.decode('utf-8')  # Convert bytes to string
         }
-        return error_response
+        print(error_response)
+        return response

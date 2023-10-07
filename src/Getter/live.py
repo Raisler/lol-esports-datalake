@@ -1,9 +1,9 @@
-from keys import API_URL_LIVE, KEY
+from ..keys import API_URL_LIVE, KEY
 import requests 
 import json 
 from datetime import datetime, timedelta
 import time
-from handle_response import handle_response
+from .handle_response import handle_response
 
 def window_game(gameId, date):
     response = requests.get(
@@ -26,7 +26,7 @@ def get_game_details(match_id, date):
     
     
 # Esse aqui vai pegar um frame só    
-def get_frame(gameId, date):
+def get_frame_window(gameId, date):
     response = requests.get(f"{API_URL_LIVE}/window/{gameId}",
         params = { "hl": "pt-BR",
                 "startingTime": date},
@@ -35,6 +35,14 @@ def get_frame(gameId, date):
     
     return handle_response(response)
 
+def get_frames(gameId, date):
+    response = requests.get(
+        f"{API_URL_LIVE}/details/{gameId}",
+        params = { "hl": "pt-BR",
+                "startingTime": date},
+        headers = {'x-api-key': KEY},
+    )
+    return response 
 
 def add_date_seconds(date_string, seconds):
     input_datetime = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
@@ -42,22 +50,22 @@ def add_date_seconds(date_string, seconds):
     return new_datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
-def get_all_frames_window_game(gameId, initial_date):
+def get_all_frames_window_game(gameId, firstFrameTime):
     store_frames = []
-    initial_date = add_date_seconds(initial_date, 180)
+    initial_date = firstFrameTime
     last_date = 'start'
     while True:
-        response = get_frame(gameId, initial_date)
+        response = get_frames(gameId, initial_date)
         
         #if game_has_ended(store_frames):
             #break
         if response.status_code == 204:
-            initial_date = add_date_seconds(initial_date, 180)  # Add 1 minute
-            print("Added 3 Minutes")
+            initial_date = add_date_seconds(initial_date, 60)  # Add 60 seconds
+            print("Added 1 Minute")
         elif response.status_code == 200:
             for frame in response.json()['frames']:
                 store_frames.append(frame)
-            initial_date = add_date_seconds(initial_date, 120)  # Add 20 seconds
+            initial_date = add_date_seconds(initial_date, 20)  # Add 20 seconds
             print(last_date)
             if store_frames[-1]['rfc460Timestamp'] == last_date:
                 break
