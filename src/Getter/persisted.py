@@ -1,5 +1,5 @@
 import requests 
-from .handle_response import handle_response
+from .utils import handle_response
 from ..keys import API_URL_PERSISTED, KEY
 
 
@@ -31,6 +31,21 @@ def getCompletedEvents(tournament_id):
     return handle_response(tournament_data)
 
 
+def get_event_details(match_id):
+    tournament_data = requests.get(
+    f"{API_URL_PERSISTED}/getEventDetails",
+    params = {'hl':'pt-BR', 'id': match_id},
+    headers = {'x-api-key': KEY}
+)
+    
+    return handle_response(tournament_data)
 
-
-
+def get_first_frame_time(match_id, game_id):
+    data = get_event_details(match_id)
+    for game in data.json()['data']['event']['match']['games']:
+        first_frame_time = game['vods'][0]['firstFrameTime']
+        game_id_to_compare = int(game['id'])
+        if game_id_to_compare == game_id:
+            return first_frame_time 
+        else:    
+            continue

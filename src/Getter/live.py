@@ -3,7 +3,22 @@ import requests
 import json 
 from datetime import datetime, timedelta
 import time
-from .handle_response import handle_response
+from .utils import handle_response, is_internet_available
+
+def make_divisible_by_10(date_string):
+    # Convert the date string to a datetime object
+    dt = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+
+    # Calculate the remainder when dividing the seconds by 10
+    remainder = dt.second % 10
+
+    # If it's not already divisible by 10, calculate the number of seconds to add
+    if remainder != 0:
+        seconds_to_add = 10 - remainder
+        dt += timedelta(seconds=seconds_to_add)
+
+    return dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+
 
 def window_game(gameId, date):
     response = requests.get(
@@ -42,7 +57,7 @@ def get_frames(gameId, date):
                 "startingTime": date},
         headers = {'x-api-key': KEY},
     )
-    return response 
+    return handle_response(response)
 
 def add_date_seconds(date_string, seconds):
     input_datetime = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
@@ -52,28 +67,31 @@ def add_date_seconds(date_string, seconds):
 
 def get_all_frames_window_game(gameId, firstFrameTime):
     store_frames = []
-    initial_date = firstFrameTime
+    initial_date = make_divisible_by_10(firstFrameTime)
     last_date = 'start'
     while True:
-        response = get_frames(gameId, initial_date)
-        
-        #if game_has_ended(store_frames):
-            #break
-        if response.status_code == 204:
-            initial_date = add_date_seconds(initial_date, 60)  # Add 60 seconds
-            print("Added 1 Minute")
-        elif response.status_code == 200:
-            for frame in response.json()['frames']:
-                store_frames.append(frame)
-            initial_date = add_date_seconds(initial_date, 20)  # Add 20 seconds
-            print(last_date)
-            if store_frames[-1]['rfc460Timestamp'] == last_date:
-                break
+        if is_internet_available():
+            response = get_frames(gameId, initial_date)
+            
+            if response.status_code != 204:
+                time.sleep(120)
+            if response.status_code == 204:
+                initial_date = add_date_seconds(initial_date, 60)  # Add 60 seconds
+                print("Added 1 Minute")
+            elif response.status_code == 200:
+                for frame in response.json()['frames']:
+                    store_frames.append(frame)
+                initial_date = add_date_seconds(initial_date, 20)  # Add 15 seconds
+                print(last_date)
+                if store_frames[-1]['rfc460Timestamp'] == last_date:
+                    break
+                else:
+                    last_date = store_frames[-1]['rfc460Timestamp']
             else:
-                last_date = store_frames[-1]['rfc460Timestamp']
-        else:
-            print(response.status_code, response.content)  
+                print(response.status_code, response.content)  
 
-        time.sleep(3)  # Wait for 1 second before the next attempt
+            time.sleep(20) 
+        else:
+            time.sleep(30)
         
     return store_frames

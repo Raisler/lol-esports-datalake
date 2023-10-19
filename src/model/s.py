@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Enum, Date, Float, JSON
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Enum, Date, Float, JSON, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -36,6 +36,7 @@ class Match(Base):
     __tablename__ = 'matches'
     
     match_id = Column(Integer, primary_key=True, autoincrement=False)
+    start_time = Column(DateTime)
     tournament_id = Column(Integer, ForeignKey('tournaments.tournament_id'))  # Corrected this line
     strategy = Column(Strategy)    
     name_team0 = Column(String)
@@ -59,13 +60,13 @@ class Frame(Base):
     __tablename__ = 'frames'
     
     id = Column(Integer, primary_key=True)
-    game_time = Column(Date)
+    game_time = Column(DateTime)
     
     # Many-to-one relationship: Frame belongs to one Game
     game_id = Column(Integer, ForeignKey('games.game_id'))
     
     # Define a back reference to access the parent Game from Frame
-    game = relationship("Game", back_populates="frames")
+    game = relationship("Game", back_populates="frames")    
     
     # Define columns for each participant
     participant1_level = Column(Integer)

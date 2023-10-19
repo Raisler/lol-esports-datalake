@@ -1,3 +1,7 @@
+# Serialized items
+frames
+matches_cblol20231
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -7,7 +11,7 @@ include
 lib
 *.so
 *.sqlite
-
+test.py
 *.cfg
 # Distribution / packaging
 .Python

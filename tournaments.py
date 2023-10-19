@@ -15,7 +15,3 @@ for t in tournaments.json()['data']['leagues'][0]['tournaments']:
 session.close()
 
 
-#cblol_2023_2 = getCompletedEvents(110413046183015975) # Tournament ID
-#frames = get_all_frames_window_game(110471059652887237, '2023-08-19T16:11:20Z')
-# Now I need to fullfill my db with tournaments
-
