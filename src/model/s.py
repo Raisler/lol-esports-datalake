@@ -26,11 +26,6 @@ class Tournament(Base):
     league_id = Column(Integer, ForeignKey('leagues.league_id'))  
     
     league = relationship('League', back_populates='tournaments')
-
-class Strategy(Enum):
-    BestOf1 = 'bestOf1'
-    BestOf3 = 'bestOf3'
-    BestOf5 = 'bestOf5'
     
 class Match(Base):
     __tablename__ = 'matches'
@@ -38,7 +33,7 @@ class Match(Base):
     match_id = Column(Integer, primary_key=True, autoincrement=False)
     start_time = Column(DateTime)
     tournament_id = Column(Integer, ForeignKey('tournaments.tournament_id'))  # Corrected this line
-    strategy = Column(Strategy)    
+    strategy = Column(String)    
     name_team0 = Column(String)
     name_team1 = Column(String)
     result_team0 = Column(Integer)

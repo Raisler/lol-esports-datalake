@@ -6,7 +6,6 @@ session = Session()
 tournament_id = 107405837336179496 #cblol 2022.1
 
 matches = extract_all_matches(getCompletedEvents(tournament_id))
-matches = (matches)
 
 
 for match in matches:

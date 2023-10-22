@@ -14,7 +14,4 @@ for league in leagues.json()['data']['leagues']:
     session.add(data)
     session.commit()
 
-
-
-
 session.close()
