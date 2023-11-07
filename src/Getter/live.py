@@ -65,33 +65,77 @@ def add_date_seconds(date_string, seconds):
     return new_datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
-def get_all_frames_window_game(gameId, firstFrameTime):
+# def get_all_frames_window_game(gameId, firstFrameTime):
+#     store_frames = []
+#     initial_date = make_divisible_by_10(firstFrameTime)
+#     last_date = 'start'
+#     while True:
+#         if is_internet_available():
+#             response = get_frames(gameId, initial_date)
+            
+#             if response.status_code != 204:
+#                 time.sleep(120)
+#             if response.status_code == 204:
+#                 initial_date = add_date_seconds(initial_date, 60)  # Add 60 seconds
+#                 print("Added 1 Minute")
+#             elif response.status_code == 200:
+#                 for frame in response.json()['frames']:
+#                     store_frames.append(frame)
+#                 initial_date = add_date_seconds(initial_date, 20)  # Add 15 seconds
+#                 print(last_date)
+#                 if store_frames[-1]['rfc460Timestamp'] == last_date:
+#                     break
+#                 else:
+#                     last_date = store_frames[-1]['rfc460Timestamp']
+#             else:
+#                 print(response.status_code, response.content)  
+
+#             time.sleep(20) 
+#         else:
+#             time.sleep(30)
+        
+#     return store_frames
+
+SLEEP_TIME_NO_INTERNET = 30
+SLEEP_TIME_API_RATE_LIMIT = 20
+SLEEP_TIME_SUCCESSFUL_RESPONSE = 20
+SLEEP_TIME_NO_FRAMES = 10
+STATUS_CODE_NO_CONTENT = 204
+STATUS_CODE_SUCCESS = 200
+
+def get_all_frames_window_game(game_id, first_frame_time):
     store_frames = []
-    initial_date = make_divisible_by_10(firstFrameTime)
+    initial_date = make_divisible_by_10(first_frame_time)
     last_date = 'start'
+    
     while True:
         if is_internet_available():
-            response = get_frames(gameId, initial_date)
+            response = get_frames(game_id, initial_date)
             
-            if response.status_code != 204:
-                time.sleep(120)
-            if response.status_code == 204:
-                initial_date = add_date_seconds(initial_date, 60)  # Add 60 seconds
-                print("Added 1 Minute")
-            elif response.status_code == 200:
-                for frame in response.json()['frames']:
-                    store_frames.append(frame)
-                initial_date = add_date_seconds(initial_date, 20)  # Add 15 seconds
-                print(last_date)
-                if store_frames[-1]['rfc460Timestamp'] == last_date:
-                    break
+            if not response:
+                time.sleep(SLEEP_TIME_API_RATE_LIMIT)
+                continue
+                
+            if response.status_code == STATUS_CODE_NO_CONTENT:
+                initial_date = add_date_seconds(initial_date, SLEEP_TIME_NO_FRAMES)
+            elif response.status_code == STATUS_CODE_SUCCESS:
+                frames = response.json().get('frames', [])
+                store_frames.extend(frames)
+                initial_date = add_date_seconds(initial_date, SLEEP_TIME_SUCCESSFUL_RESPONSE)
+                
+                if frames:
+                    last_date = frames[-1]['rfc460Timestamp']
                 else:
-                    last_date = store_frames[-1]['rfc460Timestamp']
-            else:
-                print(response.status_code, response.content)  
+                    last_date = None
 
-            time.sleep(20) 
+                print(last_date)
+
+                if last_date == 'start':
+                    break
+            else:
+                print(response.status_code, response.content)
+                time.sleep(SLEEP_TIME_API_RATE_LIMIT)
         else:
-            time.sleep(30)
-        
+            time.sleep(SLEEP_TIME_NO_INTERNET)
+    
     return store_frames
