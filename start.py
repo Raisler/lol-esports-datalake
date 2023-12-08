@@ -1,0 +1,1 @@
+# Here I will put to start the database with all leagues, tournaments, etc

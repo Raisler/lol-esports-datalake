@@ -3,14 +3,12 @@ from src.Getter.persisted import get_first_frame_time
 from src.Parser.parser import frame_parser
 from src.model.s import Session
 from src.Query.s import get_game_match_id
-from src.Getter.persisted import getCompletedEvents, getTournaments
+from src.Getter.persisted import getCompletedEvents
 from src.Parser.parser import extract_all_matches, match_parser, game_parser
-from src.Parser.common import tournament_parser
 from src.Query import s as query
-import time
 import pandas as pd
-session = Session()
 
+session = Session()
 
 leagues = query.get_leagues()
 leagues_df = pd.DataFrame([(l.name, l.region, l.league_id) for l in leagues],
@@ -48,6 +46,7 @@ if len(query.get_matches_by_tournament_id(tournament_id)) < 1:
 else:
     pass 
 
+frames_store = []
 for m in matches:
     for game_id in m['games_id']:
         game_id = int(game_id)
@@ -57,11 +56,10 @@ for m in matches:
         frames = get_all_frames_window_game(game_id, first_frame_time)
         for frame in frames:
             data = frame_parser(frame, game_id)
+            frames_store.append(data)
             
-            session.add(data)
-            session.commit()
-
-
+session.add_all(frames_store)
+session.commit()
 session.close()
 
 

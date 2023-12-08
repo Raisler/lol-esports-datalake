@@ -97,8 +97,8 @@ def add_date_seconds(date_string, seconds):
 #     return store_frames
 
 SLEEP_TIME_NO_INTERNET = 30
-SLEEP_TIME_API_RATE_LIMIT = 20
-SLEEP_TIME_SUCCESSFUL_RESPONSE = 20
+SLEEP_TIME_API_RATE_LIMIT = 10
+SLEEP_TIME_SUCCESSFUL_RESPONSE = 10
 SLEEP_TIME_NO_FRAMES = 10
 STATUS_CODE_NO_CONTENT = 204
 STATUS_CODE_SUCCESS = 200
@@ -109,7 +109,7 @@ def get_all_frames_window_game(game_id, first_frame_time):
     last_date = 'start'
     
     while True:
-        if is_internet_available():
+        try:
             response = get_frames(game_id, initial_date)
             
             if not response:
@@ -122,20 +122,15 @@ def get_all_frames_window_game(game_id, first_frame_time):
                 frames = response.json().get('frames', [])
                 store_frames.extend(frames)
                 initial_date = add_date_seconds(initial_date, SLEEP_TIME_SUCCESSFUL_RESPONSE)
-                
-                if frames:
-                    last_date = frames[-1]['rfc460Timestamp']
-                else:
-                    last_date = None
 
-                print(last_date)
-
-                if last_date == 'start':
+                if store_frames[-1]['rfc460Timestamp'] == last_date:
                     break
+                else:
+                    last_date = store_frames[-1]['rfc460Timestamp']
             else:
                 print(response.status_code, response.content)
                 time.sleep(SLEEP_TIME_API_RATE_LIMIT)
-        else:
+        except:
             time.sleep(SLEEP_TIME_NO_INTERNET)
     
     return store_frames
