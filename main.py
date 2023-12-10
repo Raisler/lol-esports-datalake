@@ -46,17 +46,22 @@ if len(query.get_matches_by_tournament_id(tournament_id)) < 1:
 else:
     pass 
 
+failed_games_extract = [] 
 frames_store = []
 for m in matches:
     for game_id in m['games_id']:
         game_id = int(game_id)
         match_id = get_game_match_id(game_id)
         first_frame_time = get_first_frame_time(match_id, game_id) 
-
-        frames = get_all_frames_window_game(game_id, first_frame_time)
-        for frame in frames:
-            data = frame_parser(frame, game_id)
-            frames_store.append(data)
+        if first_frame_time == None:
+            print("first_frame_time null")
+            failed_games_extract.append([m,game_id])
+            continue
+        else:
+            frames = get_all_frames_window_game(game_id, first_frame_time)
+            for frame in frames:
+                data = frame_parser(frame, game_id)
+                frames_store.append(data)
             
 session.add_all(frames_store)
 session.commit()
