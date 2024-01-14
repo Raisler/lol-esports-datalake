@@ -39,8 +39,8 @@ def get_game_details(match_id, date):
     )
     return handle_response(response)
     
-    
-# Esse aqui vai pegar um frame só    
+
+# Only one frame    
 def get_frame_window(gameId, date):
     response = requests.get(f"{API_URL_LIVE}/window/{gameId}",
         params = { "hl": "pt-BR",
@@ -103,7 +103,7 @@ SLEEP_TIME_NO_FRAMES = 10
 STATUS_CODE_NO_CONTENT = 204
 STATUS_CODE_SUCCESS = 200
 
-def get_all_frames_window_game(game_id, first_frame_time):
+def get_all_frames(game_id, first_frame_time):
     store_frames = []
     initial_date = make_divisible_by_10(first_frame_time)
     last_date = 'start'
@@ -133,4 +133,34 @@ def get_all_frames_window_game(game_id, first_frame_time):
         except:
             time.sleep(SLEEP_TIME_NO_INTERNET)
     
+    return store_frames
+
+
+def get_all_frames_v2(game_id, first_frame_time):
+    store_frames = []
+    initial_date = make_divisible_by_10(first_frame_time)
+    while True:
+        try:
+            response = get_frame_window(game_id, initial_date)
+                
+            if not response:
+                time.sleep(SLEEP_TIME_API_RATE_LIMIT)
+                continue
+
+            if response.status_code == STATUS_CODE_NO_CONTENT:
+                initial_date = add_date_seconds(initial_date, SLEEP_TIME_NO_FRAMES)
+            elif response.status_code == STATUS_CODE_SUCCESS:
+                frames = response.json().get('frames', [])
+                store_frames.extend(frames)
+                initial_date = add_date_seconds(initial_date, SLEEP_TIME_SUCCESSFUL_RESPONSE)
+                game_state = response.json()['frames'][-1]['gameState']
+                if  game_state != 'paused' and game_state != 'in_game':
+                    break
+                else:
+                    continue
+
+    
+        except:
+             time.sleep(SLEEP_TIME_NO_INTERNET)
+
     return store_frames

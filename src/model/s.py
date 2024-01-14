@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Enum,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
-db_url = 'sqlite:///shiba.sqlite'
+db_url = 'sqlite:///datalake.sqlite'
 engine = create_engine(db_url, echo=True)
 
 Base = declarative_base()
@@ -49,6 +49,7 @@ class Game(Base):
     
     match_id = Column(Integer, ForeignKey('matches.match_id'))
     frames = relationship("Frame", back_populates="game")
+    frames_two = relationship("FrameTwo", back_populates="game")
     match = relationship("Match", back_populates="games")
 
 class Frame(Base):
@@ -273,6 +274,123 @@ class Frame(Base):
     participant10_tenacity = Column(Float)
     participant10_items = Column(JSON)
     participant10_perkMetadata = Column(JSON)
+    
+class FrameTwo(Base):
+    __tablename__ = 'frames_two'
+    
+    id = Column(Integer, primary_key=True)
+    game_time = Column(DateTime)
+    
+    # Many-to-one relationship: Frame belongs to one Game
+    game_id = Column(Integer, ForeignKey('games.game_id'))
+    
+    # Define a back reference to access the parent Game from Frame
+    game = relationship("Game", back_populates="frames_two")    
+    
+    blueTeam_totalGold = Column(Integer)
+    blueTeam_inhibitors = Column(Integer)
+    blueTeam_towers = Column(Integer)
+    blueTeam_barons = Column(Integer)
+    blueTeam_totalKills = Column(Integer)
+    blueTeam_dragons = Column(JSON)  
+     
+    redTeam_totalGold = Column(Integer)
+    redTeam_inhibitors = Column(Integer)
+    redTeam_towers = Column(Integer)
+    redTeam_barons = Column(Integer)
+    redTeam_totalKills = Column(Integer)
+    redTeam_dragons = Column(JSON)
+    
+    participant1_totalGold = Column(Integer)
+    participant1_level = Column(Integer)
+    participant1_kills = Column(Integer)
+    participant1_deaths = Column(Integer)
+    participant1_assists  = Column(Integer)
+    participant1_creepScore  = Column(Integer)
+    participant1_currentHealth = Column(Integer)
+    participant1_maxHealth  = Column(Integer)
+    
+    participant2_totalGold = Column(Integer)
+    participant2_level = Column(Integer)
+    participant2_kills = Column(Integer)
+    participant2_deaths = Column(Integer)
+    participant2_assists  = Column(Integer)
+    participant2_creepScore  = Column(Integer)
+    participant2_currentHealth = Column(Integer)
+    participant2_maxHealth  = Column(Integer)
+    
+    participant3_totalGold = Column(Integer)
+    participant3_level = Column(Integer)
+    participant3_kills = Column(Integer)
+    participant3_deaths = Column(Integer)
+    participant3_assists  = Column(Integer)
+    participant3_creepScore  = Column(Integer)
+    participant3_currentHealth = Column(Integer)
+    participant3_maxHealth  = Column(Integer)
+    
+    participant4_totalGold = Column(Integer)
+    participant4_level = Column(Integer)
+    participant4_kills = Column(Integer)
+    participant4_deaths = Column(Integer)
+    participant4_assists  = Column(Integer)
+    participant4_creepScore  = Column(Integer)
+    participant4_currentHealth = Column(Integer)
+    participant4_maxHealth  = Column(Integer)
+    
+    participant5_totalGold = Column(Integer)
+    participant5_level = Column(Integer)
+    participant5_kills = Column(Integer)
+    participant5_deaths = Column(Integer)
+    participant5_assists  = Column(Integer)
+    participant5_creepScore  = Column(Integer)
+    participant5_currentHealth = Column(Integer)
+    participant5_maxHealth  = Column(Integer)
+    
+    participant6_totalGold = Column(Integer)
+    participant6_level = Column(Integer)
+    participant6_kills = Column(Integer)
+    participant6_deaths = Column(Integer)
+    participant6_assists  = Column(Integer)
+    participant6_creepScore  = Column(Integer)
+    participant6_currentHealth = Column(Integer)
+    participant6_maxHealth  = Column(Integer)
+    
+    participant7_totalGold = Column(Integer)
+    participant7_level = Column(Integer)
+    participant7_kills = Column(Integer)
+    participant7_deaths = Column(Integer)
+    participant7_assists  = Column(Integer)
+    participant7_creepScore  = Column(Integer)
+    participant7_currentHealth = Column(Integer)
+    participant7_maxHealth  = Column(Integer)
+    
+    participant8_totalGold = Column(Integer)
+    participant8_level = Column(Integer)
+    participant8_kills = Column(Integer)
+    participant8_deaths = Column(Integer)
+    participant8_assists  = Column(Integer)
+    participant8_creepScore  = Column(Integer)
+    participant8_currentHealth = Column(Integer)
+    participant8_maxHealth  = Column(Integer)
+    
+    participant9_totalGold = Column(Integer)
+    participant9_level = Column(Integer)
+    participant9_kills = Column(Integer)
+    participant9_deaths = Column(Integer)
+    participant9_assists  = Column(Integer)
+    participant9_creepScore  = Column(Integer)
+    participant9_currentHealth = Column(Integer)
+    participant9_maxHealth  = Column(Integer)
+    
+    participant10_totalGold = Column(Integer)
+    participant10_level = Column(Integer)
+    participant10_kills = Column(Integer)
+    participant10_deaths = Column(Integer)
+    participant10_assists  = Column(Integer)
+    participant10_creepScore  = Column(Integer)
+    participant10_currentHealth = Column(Integer)
+    participant10_maxHealth  = Column(Integer)
+    
     
     
 Base.metadata.create_all(engine)
