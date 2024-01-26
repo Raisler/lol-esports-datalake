@@ -2,6 +2,7 @@
 frames
 matches_cblol20231
 failed_games_extract_20221.pkl
+sqlalchemy_example.md
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
