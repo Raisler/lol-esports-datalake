@@ -1,6 +1,11 @@
 import requests 
 from .utils import handle_response
-from ..keys import API_URL_PERSISTED, KEY
+from dotenv import load_dotenv
+import os 
+
+load_dotenv() 
+API_URL_PERSISTED = os.getenv("API_URL_PERSISTED")
+KEY = os.getenv("KEY")
 
 
 def getLeagues():
@@ -32,13 +37,13 @@ def getCompletedEvents(tournament_id):
 
 
 def get_event_details(match_id):
-    tournament_data = requests.get(
+    response = requests.get(
     f"{API_URL_PERSISTED}/getEventDetails",
     params = {'hl':'pt-BR', 'id': match_id},
     headers = {'x-api-key': KEY}
 )
     
-    return handle_response(tournament_data)
+    return handle_response(response)
 
 def get_first_frame_time(match_id, game_id):
     data = get_event_details(match_id)
@@ -49,3 +54,11 @@ def get_first_frame_time(match_id, game_id):
             return first_frame_time 
         else:    
             continue
+        
+def get_live_game():
+    response = requests.get(f"{API_URL_PERSISTED}/getLive/",
+        params = { "hl": "pt-BR"},
+        headers = {'x-api-key': KEY},
+    )
+    
+    return handle_response(response)

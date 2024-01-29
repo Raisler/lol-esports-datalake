@@ -1,9 +1,16 @@
-from ..keys import API_URL_LIVE, KEY
 import requests 
 import json 
 from datetime import datetime, timedelta
 import time
 from .utils import handle_response, is_internet_available
+
+from dotenv import load_dotenv
+import os 
+
+load_dotenv() 
+API_URL_LIVE = os.getenv("API_URL_LIVE")
+KEY = os.getenv("KEY")
+
 
 def make_divisible_by_10(date_string):
     # Convert the date string to a datetime object
@@ -164,3 +171,7 @@ def get_all_frames_v2(game_id, first_frame_time):
              time.sleep(SLEEP_TIME_NO_INTERNET)
 
     return store_frames
+
+
+
+
