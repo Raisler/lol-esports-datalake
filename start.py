@@ -9,5 +9,3 @@ subprocess.run(["python leagues.py"], shell=True, capture_output=True, text=True
 
 # Tournaments
 subprocess.run(["python tournaments.py"], shell=True, capture_output=True, text=True)
-
-# Matches

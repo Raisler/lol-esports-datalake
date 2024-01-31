@@ -57,7 +57,7 @@ def get_first_frame_time(match_id, game_id):
         
 def get_live_game():
     response = requests.get(f"{API_URL_PERSISTED}/getLive/",
-        params = { "hl": "pt-BR"},
+        params = { "hl": "en-US"},
         headers = {'x-api-key': KEY},
     )
     
