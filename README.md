@@ -1,9 +1,5 @@
 ![image](https://www.riotgames.com/darkroom/1440/a4e88f6b04bf83f1c417e87292b85606:b62ff9b783f3dd26a6321e1440efe13b/riot-games-the-team-behind-worlds-2022-esports-broadcast-league-of-legends.png)
 
-Sure, here's an improved version of the README.md file:
-
----
-
 # LOL Esports Datalake
 
 The LOL Esports Datalake project aims to gather comprehensive information about games, teams, tournaments, and other relevant data from various leagues including CBLOL, LEC, LCS, and others. This data is then fed into a datalake for further analysis and utilization.
