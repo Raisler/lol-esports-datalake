@@ -77,7 +77,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 Special thanks to Riot Games for providing access to the API and supporting the development of esports analytics.
 
----
-
-Feel free to customize and expand this README further to include additional details, instructions, or acknowledgments as needed for your project.
 
