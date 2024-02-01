@@ -56,9 +56,12 @@ To populate the datalake with data:
 1. Run the main script:
 
    ```bash
-   python main.py
+   python feeder_frame_v1.py
    ```
-
+   or, the version 2 to get the frame version 2 (less details) 
+   ```bash
+   python feeder_frame_v2.py
+   ```
    This script allows you to choose a specific tournament and retrieves all matches/games along with their frames (specific moments of the game).
 
 ## Usage
