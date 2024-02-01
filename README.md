@@ -73,8 +73,8 @@ Contributions to the project are welcome! Feel free to submit pull requests, rep
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Acknowledgments
+## API DOCS
 
-Special thanks to Riot Games for providing access to the API and supporting the development of esports analytics.
+https://vickz84259.github.io/lolesports-api-docs
 
 
