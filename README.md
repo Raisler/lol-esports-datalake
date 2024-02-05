@@ -80,4 +80,10 @@ This project is licensed under the [MIT License](LICENSE).
 
 https://vickz84259.github.io/lolesports-api-docs
 
+## NEXT STEPS
+
+* Machine learnign model using Random Forest Classifier (an ensemble)
+* Live Inference of the game using ML Models
+* Feature Engineering (add more data)
+
 
