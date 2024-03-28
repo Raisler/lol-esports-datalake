@@ -6,16 +6,20 @@ from .utils import handle_response, is_internet_available
 
 from dotenv import load_dotenv
 import os 
+from ..keys import API_URL_LIVE, KEY
 
+
+
+'''
 load_dotenv() 
 API_URL_LIVE = os.getenv("API_URL_LIVE")
 KEY = os.getenv("KEY")
+'''
 
 
 def make_divisible_by_10(date_string):
     # Convert the date string to a datetime object
-    dt = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-
+    dt = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S.%fZ')#'%Y-%m-%dT%H:%M:%SZ')
     # Calculate the remainder when dividing the seconds by 10
     remainder = dt.second % 10
 
@@ -24,7 +28,7 @@ def make_divisible_by_10(date_string):
         seconds_to_add = 10 - remainder
         dt += timedelta(seconds=seconds_to_add)
 
-    return dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def window_game(gameId, date):
@@ -103,10 +107,10 @@ def add_date_seconds(date_string, seconds):
         
 #     return store_frames
 
-SLEEP_TIME_NO_INTERNET = 30
-SLEEP_TIME_API_RATE_LIMIT = 10
+SLEEP_TIME_NO_INTERNET = 20
+SLEEP_TIME_API_RATE_LIMIT = 3
 SLEEP_TIME_SUCCESSFUL_RESPONSE = 10
-SLEEP_TIME_NO_FRAMES = 10
+SLEEP_TIME_NO_FRAMES = 20
 STATUS_CODE_NO_CONTENT = 204
 STATUS_CODE_SUCCESS = 200
 
@@ -149,7 +153,6 @@ def get_all_frames_v2(game_id, first_frame_time):
     while True:
         try:
             response = get_frame_window(game_id, initial_date)
-                
             if not response:
                 time.sleep(SLEEP_TIME_API_RATE_LIMIT)
                 continue
@@ -157,19 +160,23 @@ def get_all_frames_v2(game_id, first_frame_time):
             if response.status_code == STATUS_CODE_NO_CONTENT:
                 initial_date = add_date_seconds(initial_date, SLEEP_TIME_NO_FRAMES)
             elif response.status_code == STATUS_CODE_SUCCESS:
+                
                 frames = response.json().get('frames', [])
                 store_frames.extend(frames)
                 initial_date = add_date_seconds(initial_date, SLEEP_TIME_SUCCESSFUL_RESPONSE)
                 game_state = response.json()['frames'][-1]['gameState']
                 if  game_state != 'paused' and game_state != 'in_game':
+                    print('Data game extraction finished')
                     break
                 else:
                     continue
 
     
         except:
-             time.sleep(SLEEP_TIME_NO_INTERNET)
-
+            print('No internet')
+            time.sleep(SLEEP_TIME_NO_INTERNET)
+            print('keep going')
+            
     return store_frames
 
 

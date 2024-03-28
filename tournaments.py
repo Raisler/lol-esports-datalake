@@ -2,11 +2,11 @@ from src.Getter.persisted import getTournaments
 from src.Parser.common import tournament_parser
 from src.model.s import Session
 import pandas as pd
-from src.Query.s import query 
+from src.Query.s import get_leagues
 session = Session()
 
 
-leagues = query.get_leagues()
+leagues = get_leagues()
 leagues_df = pd.DataFrame([(l.name, l.region, l.league_id) for l in leagues],
                           columns = ['name', 'region', 'id'])
 

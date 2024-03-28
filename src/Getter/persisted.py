@@ -2,10 +2,10 @@ import requests
 from .utils import handle_response
 from dotenv import load_dotenv
 import os 
-
-load_dotenv() 
-API_URL_PERSISTED = os.getenv("API_URL_PERSISTED")
-KEY = os.getenv("KEY")
+from ..keys import API_URL_PERSISTED, KEY
+# load_dotenv() 
+# API_URL_PERSISTED = os.getenv("API_URL_PERSISTED")
+# KEY = os.getenv("KEY")
 
 
 def getLeagues():
