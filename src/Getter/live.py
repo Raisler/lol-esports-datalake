@@ -7,7 +7,7 @@ from .utils import handle_response, is_internet_available
 from dotenv import load_dotenv
 import os 
 from ..keys import API_URL_LIVE, KEY
-
+import traceback
 
 
 '''
@@ -173,10 +173,10 @@ def get_all_frames_v2(game_id, first_frame_time):
 
     
         except:
-            print('No internet')
+            print('no internet')
             time.sleep(SLEEP_TIME_NO_INTERNET)
             print('keep going')
-            
+            continue
     return store_frames
 
 

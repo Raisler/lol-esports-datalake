@@ -47,24 +47,33 @@ else:
     pass 
 
 failed_games_extract = [] 
-frames_store = []
+
+extracted_games = pd.read_csv('extracted_games.csv')
+
 for m in matches:
+    frames_store = []
+    
     for game_id in m['games_id']:
-        game_id = int(game_id)
-        match_id = get_game_match_id(game_id)
-        first_frame_time = get_first_frame_time(match_id, game_id) 
-        if first_frame_time == None:
-            print("first_frame_time null")
-            failed_games_extract.append([m,game_id])
+        if game_id in extracted_games['game_id']:
             continue
         else:
-            frames = get_all_frames_v2(game_id, first_frame_time)
-            for frame in frames:
-                data = frame_parser_v2(frame, game_id)
-                frames_store.append(data)
-            
-session.add_all(frames_store)
-session.commit()
+            game_id = int(game_id)
+            match_id = get_game_match_id(game_id)
+            first_frame_time = get_first_frame_time(match_id, game_id) 
+            if first_frame_time == None:
+                print("first_frame_time null")
+                failed_games_extract.append([m,game_id])
+                continue
+            else:
+                frames = get_all_frames_v2(game_id, first_frame_time)
+                for frame in frames:
+                    data = frame_parser_v2(frame, game_id)
+                    frames_store.append(data)
+                extracted_games = extracted_games._append({'game_id': game_id}, ignore_index=True)
+    session.add_all(frames_store)
+    session.commit()    
+    
+extracted_games.to_csv('extracted_games.csv', index=False)
 session.close()
 
 
