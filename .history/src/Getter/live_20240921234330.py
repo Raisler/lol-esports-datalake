@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import time
 from .utils import handle_response, is_internet_available
 
+from dotenv import load_dotenv
 import os 
 from ..keys import API_URL_LIVE, KEY
 import traceback
