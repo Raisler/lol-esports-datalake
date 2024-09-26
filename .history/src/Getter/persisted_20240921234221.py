@@ -1,5 +1,6 @@
 import requests 
 from .utils import handle_response
+from dotenv import load_dotenv
 import os 
 from ..keys import API_URL_PERSISTED, KEY
 # load_dotenv() 
