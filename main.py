@@ -1,5 +1,3 @@
-import uuid
-from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 
@@ -9,11 +7,11 @@ from src.Getter.persisted import getTournaments
 
 def stream_data():
     import json
-    from kafka import KafkaProducer
+    from confluent_kafka import Producer
     import time
     import logging
 
-    producer = KafkaProducer(bootstrap_servers=['broker:29092'], max_block_ms=5000)
+    producer = Producer(bootstrap_servers=['broker:29092'], max_block_ms=5000)
     curr_time = time.time()
 
     while True:
